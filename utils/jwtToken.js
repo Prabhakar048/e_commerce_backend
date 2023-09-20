@@ -2,14 +2,23 @@
 
 const sendToken = (user, statusCode, res) => {
   const token = user.getJWTToken();
-
-  // options for cookie
-  const options = {
+let options 
+  if(process.env.NODE_ENV== "production"){
+     options = {
     expires: new Date(
       Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
   };
+  }else{
+    options = {
+      expires: new Date(
+        Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+      ),
+      sameSite: "lax",
+   }
+  }
+  
 
   res.status(statusCode).cookie("token", token, options).json({
     success: true,
